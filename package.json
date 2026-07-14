@@ -1,0 +1,32 @@
+{
+    "name": "chrome-based-screen-recorder",
+    "version": "1.0.0",
+    "private": true,
+    "description": "ScreenForge — a privacy-first, in-browser screen and microphone recorder built with the MediaRecorder API. No frameworks, no backend, no tracking.",
+    "keywords": [
+        "screen-recorder",
+        "media-recorder",
+        "getDisplayMedia",
+        "webm",
+        "vanilla-js",
+        "chrome",
+        "vercel"
+    ],
+    "author": "kartikm0111",
+    "license": "MIT",
+    "homepage": "https://github.com/kartikm0111/Chrome-based-screen-recorder#readme",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/kartikm0111/Chrome-based-screen-recorder.git"
+    },
+    "bugs": {
+        "url": "https://github.com/kartikm0111/Chrome-based-screen-recorder/issues"
+    },
+    "scripts": {
+        "start": "npx --yes serve@latest . -l 3000",
+        "dev": "npx --yes serve@latest . -l 3000",
+        "format": "npx --yes prettier@3 --write \"**/*.{html,css,js,json,md}\"",
+        "lint:html": "npx --yes html-validate@8 index.html"
+    },
+    "devDependencies": {}
+}
