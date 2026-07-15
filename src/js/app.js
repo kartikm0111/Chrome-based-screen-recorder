@@ -19,9 +19,12 @@
 
     // ---- Element refs ----
     const els = {
+        modeSelect:     $("#modeSelect"),
         micToggle:      $("#micToggle"),
         sysAudioToggle: $("#sysAudioToggle"),
+        sysAudioRow:    $("#sysAudioRow"),
         camToggle:      $("#camToggle"),
+        camRow:         $("#camRow"),
         camPosField:    $("#camPosField"),
         camPosSelect:   $("#camPosSelect"),
         countdown:      $("#countdownSelect"),
@@ -81,6 +84,7 @@
     const PREFS_KEY = "screenforge:prefs:v1";
 
     const defaultPrefs = {
+        mode: "screen",
         mic: true,
         systemAudio: true,
         webcam: false,
@@ -113,12 +117,20 @@
         return k.charAt(0).toUpperCase() + k.slice(1); // e.g. Enter, Escape
     }
 
+    function syncModeUI() {
+        const webcamOnly = els.modeSelect.value === "webcam";
+        // System audio and the PiP bubble only make sense when sharing a screen.
+        els.sysAudioRow.style.display = webcamOnly ? "none" : "";
+        els.camRow.style.display      = webcamOnly ? "none" : "";
+        els.camPosField.hidden        = webcamOnly || !els.camToggle.checked;
+    }
+
     function applyPrefsToUI() {
+        els.modeSelect.value       = prefs.mode;
         els.micToggle.checked      = prefs.mic;
         els.sysAudioToggle.checked = prefs.systemAudio;
         els.camToggle.checked      = prefs.webcam;
         els.camPosSelect.value     = prefs.webcamPos;
-        els.camPosField.hidden     = !prefs.webcam;
         els.countdown.value        = String(prefs.countdown);
         els.quality.value          = prefs.quality;
 
@@ -128,6 +140,8 @@
 
         els.hotkeyRecordBtn.textContent = keyLabel(prefs.hotkeyRecord);
         els.hotkeyPauseBtn.textContent  = keyLabel(prefs.hotkeyPause);
+
+        syncModeUI();
     }
 
     /* ------------------------------------------------------------------ *
@@ -167,7 +181,7 @@
             els.resumeBtn.disabled = true;
         }
 
-        [els.micToggle, els.sysAudioToggle, els.camToggle,
+        [els.modeSelect, els.micToggle, els.sysAudioToggle, els.camToggle,
          els.camPosSelect, els.countdown, els.quality, els.mime]
             .forEach(el => { el.disabled = running; });
 
@@ -340,6 +354,7 @@
             els.stopBtn.disabled = false; // allow cancelling the countdown
             await runCountdown(parseInt(els.countdown.value, 10) || 0);
             await recorder.start({
+                mode:        els.modeSelect.value,
                 mic:         els.micToggle.checked,
                 systemAudio: els.sysAudioToggle.checked,
                 webcam:      els.camToggle.checked,
@@ -553,11 +568,16 @@
      *  Preference persistence wiring
      * ------------------------------------------------------------------ */
 
+    els.modeSelect.addEventListener("change", () => {
+        prefs.mode = els.modeSelect.value;
+        syncModeUI();
+        savePrefs();
+    });
     els.micToggle.addEventListener("change", () => { prefs.mic = els.micToggle.checked; savePrefs(); });
     els.sysAudioToggle.addEventListener("change", () => { prefs.systemAudio = els.sysAudioToggle.checked; savePrefs(); });
     els.camToggle.addEventListener("change", () => {
         prefs.webcam = els.camToggle.checked;
-        els.camPosField.hidden = !prefs.webcam;
+        syncModeUI();
         savePrefs();
     });
     els.camPosSelect.addEventListener("change", () => { prefs.webcamPos = els.camPosSelect.value; savePrefs(); });

@@ -257,9 +257,10 @@
         /**
          * Begin a new recording.
          * @param {object}  opts
+         * @param {string}  opts.mode        'screen' (default) | 'webcam' — webcam-only skips screen share
          * @param {boolean} opts.mic
          * @param {boolean} opts.systemAudio
-         * @param {boolean} opts.webcam      composite a webcam PiP bubble
+         * @param {boolean} opts.webcam      composite a webcam PiP bubble (screen mode only)
          * @param {string}  opts.webcamPos   'bottom-right'|'bottom-left'|'top-right'|'top-left'
          * @param {number}  opts.height      preferred video height (e.g. 720)
          * @param {string}  opts.mimeType    preferred mime type ('video/mp4...' allowed)
@@ -269,8 +270,12 @@
                 throw new Error("Recorder is already active.");
             }
 
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
-                throw new Error("This browser doesn't support screen capture (getDisplayMedia).");
+            const webcamOnly = opts.mode === "webcam";
+
+            if (!navigator.mediaDevices ||
+                (!webcamOnly && !navigator.mediaDevices.getDisplayMedia) ||
+                (webcamOnly && !navigator.mediaDevices.getUserMedia)) {
+                throw new Error("This browser doesn't support the required capture APIs.");
             }
 
             const mime = pickMimeType(opts.mimeType);
@@ -279,23 +284,41 @@
             }
             this._mimeType = mime;
 
-            // 1. Display media
-            const displayConstraints = {
-                video: {
-                    frameRate: { ideal: 30, max: 60 },
-                    height:    { ideal: opts.height || 720 }
-                },
-                audio: !!opts.systemAudio
-            };
-
+            // 1. Primary video source — screen share, or the webcam itself.
             let displayStream;
-            try {
-                displayStream = await navigator.mediaDevices.getDisplayMedia(displayConstraints);
-            } catch (err) {
-                if (err && (err.name === "NotAllowedError" || err.name === "AbortError")) {
-                    throw new Error("Screen capture was cancelled.");
+            if (webcamOnly) {
+                try {
+                    displayStream = await navigator.mediaDevices.getUserMedia({
+                        video: {
+                            frameRate: { ideal: 30 },
+                            height:    { ideal: opts.height || 720 },
+                            facingMode: "user"
+                        },
+                        audio: false
+                    });
+                } catch (err) {
+                    if (err && (err.name === "NotAllowedError" || err.name === "AbortError")) {
+                        throw new Error("Webcam access was denied.");
+                    }
+                    throw err;
                 }
-                throw err;
+            } else {
+                const displayConstraints = {
+                    video: {
+                        frameRate: { ideal: 30, max: 60 },
+                        height:    { ideal: opts.height || 720 }
+                    },
+                    audio: !!opts.systemAudio
+                };
+
+                try {
+                    displayStream = await navigator.mediaDevices.getDisplayMedia(displayConstraints);
+                } catch (err) {
+                    if (err && (err.name === "NotAllowedError" || err.name === "AbortError")) {
+                        throw new Error("Screen capture was cancelled.");
+                    }
+                    throw err;
+                }
             }
             this._displayStream = displayStream;
 
@@ -317,9 +340,9 @@
                 }
             }
 
-            // 3. Webcam PiP (optional, non-fatal)
+            // 3. Webcam PiP (optional, non-fatal; screen mode only — pointless over the webcam itself)
             let videoTrack = displayStream.getVideoTracks()[0];
-            if (opts.webcam) {
+            if (opts.webcam && !webcamOnly) {
                 try {
                     const camStream = await navigator.mediaDevices.getUserMedia({
                         video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" }

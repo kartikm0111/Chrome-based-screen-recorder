@@ -92,6 +92,16 @@
                 <aside class="panel panel--controls" aria-labelledby="controls-title">
                     <h3 id="controls-title" class="panel__title">Sources</h3>
 
+                    <div class="field field--first">
+                        <label class="field__label" for="modeSelect">Recording mode</label>
+                        <div class="select">
+                            <select id="modeSelect">
+                                <option value="screen" selected>🖥️ Screen (with optional webcam bubble)</option>
+                                <option value="webcam">📹 Webcam only</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="toggle">
                         <div class="toggle__info">
                             <span class="toggle__label">Include microphone</span>
@@ -103,7 +113,7 @@
                         </label>
                     </div>
 
-                    <div class="toggle">
+                    <div class="toggle" id="sysAudioRow">
                         <div class="toggle__info">
                             <span class="toggle__label">Include system audio</span>
                             <span class="toggle__hint">Captured when supported by the browser/OS.</span>
@@ -114,7 +124,7 @@
                         </label>
                     </div>
 
-                    <div class="toggle">
+                    <div class="toggle" id="camRow">
                         <div class="toggle__info">
                             <span class="toggle__label">Webcam overlay</span>
                             <span class="toggle__hint">Burns a face-cam bubble into the video.</span>

@@ -465,6 +465,7 @@ button { font-family: inherit; }
 /* Field */
 
 .field { margin-top: 16px; }
+.field--first { margin-top: 0; margin-bottom: 6px; }
 .field__label {
     display: block;
     margin-bottom: 6px;

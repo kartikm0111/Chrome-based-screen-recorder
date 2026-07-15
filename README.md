@@ -120,6 +120,7 @@ The entire application is a **single static site** that ships in **under 30 KB g
 | 🎛️ | **Quality presets** | 480p / 720p / 1080p resolutions at 30–60 FPS. |
 | 🧩 | **Codec picker** | VP9 + Opus, VP8 + Opus, or **MP4 · H.264** where the browser supports it. |
 | 📹 | **Webcam overlay** | A circular face-cam bubble composited live into any corner of the recording. |
+| 🤳 | **Webcam-only mode** | Record just your camera — no screen share required. |
 | ⏱️ | **Countdown** | Optional 3 / 5 / 10-second on-screen countdown before capture begins. |
 | ✂️ | **In-browser trim** | Cut the start and end off your clip with dual sliders — no external editor. |
 | 📸 | **Screenshot mode** | Grab a full-resolution PNG still of the shared screen mid-recording. |
@@ -444,9 +445,11 @@ The only outbound network requests are for **Google Fonts** (Inter, JetBrains Mo
 - [x] Custom hotkey remapping — click a key chip and press any key
 - [x] Presets persisted to `localStorage` — every toggle survives a refresh
 - [x] Screenshot mode — grab a full-res PNG still mid-recording
-- [ ] Cloud upload adapters (opt-in) — Google Drive, Dropbox
-- [ ] Webcam-only recording mode
-- [ ] Annotation tools (draw on screen while recording)
+- [x] Webcam-only recording mode — record your camera without sharing a screen
+
+**Everything on the roadmap has shipped.** 🎉 Have an idea for what's next?
+[Open an issue](https://github.com/kartikm0111/Chrome-based-screen-recorder/issues) — cloud-upload
+adapters were deliberately left out to keep the app 100 % client-side and private.
 
 ---
 
