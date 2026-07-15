@@ -799,6 +799,168 @@ button { font-family: inherit; }
     border-radius: 6px;
 }
 
+/* ---------------------- v1.1 components ---------------------- */
+
+/* Countdown overlay */
+.countdown {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(6px);
+    z-index: 5;
+}
+
+.countdown__num {
+    font-family: "JetBrains Mono", monospace;
+    font-size: clamp(80px, 18vw, 160px);
+    font-weight: 800;
+    background: var(--grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: countpop 1s ease-in-out infinite;
+}
+
+@keyframes countpop {
+    0%   { transform: scale(0.7); opacity: 0.2; }
+    25%  { transform: scale(1.08); opacity: 1; }
+    85%  { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.4; }
+}
+
+/* Small button variant */
+.btn--sm { padding: 8px 14px; font-size: 13px; border-radius: 10px; }
+
+/* Trim panel */
+.trim {
+    padding: 16px 22px;
+    background: rgba(0, 0, 0, 0.3);
+    border-top: 1px solid var(--border);
+}
+
+.trim__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.trim__title { font-size: 13px; font-weight: 700; letter-spacing: 0.04em; }
+
+.trim__range {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    font-variant-numeric: tabular-nums;
+}
+
+.trim__sliders {
+    position: relative;
+    height: 28px;
+    margin-bottom: 12px;
+}
+
+.trim__sliders input[type="range"] {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent;
+    pointer-events: none;
+    margin: 0;
+}
+
+.trim__sliders input[type="range"]::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    margin-top: 11px;
+}
+
+.trim__sliders input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--grad);
+    border: 2px solid #fff;
+    margin-top: -6px;
+    cursor: ew-resize;
+    pointer-events: auto;
+    box-shadow: 0 2px 10px rgba(139, 92, 246, 0.6);
+}
+
+.trim__sliders input[type="range"]::-moz-range-track {
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.trim__sliders input[type="range"]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--violet);
+    border: 2px solid #fff;
+    cursor: ew-resize;
+    pointer-events: auto;
+}
+
+.trim__actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.trim__progress {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    color: var(--cyan);
+}
+
+/* Hotkey remap */
+.hotkeys { display: flex; flex-direction: column; gap: 8px; }
+
+.hotkey {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.hotkey__label { font-size: 13px; color: var(--text-dim); }
+
+.hotkey__btn {
+    min-width: 64px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-strong);
+    background: rgba(0, 0, 0, 0.4);
+    color: var(--text);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: border-color var(--dur), background var(--dur), box-shadow var(--dur);
+}
+
+.hotkey__btn:hover { border-color: var(--violet); }
+
+.hotkey__btn.is-listening {
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.25);
+    animation: pulse 1s infinite;
+}
+
+.hotkeys__hint {
+    margin: 4px 0 0;
+    font-size: 11px;
+    color: var(--text-mute);
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {

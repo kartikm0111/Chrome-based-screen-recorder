@@ -4,6 +4,21 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] — 2026-07-14
+
+### Added
+- **Webcam picture-in-picture overlay** — a circular face-cam bubble composited live onto the recording via a canvas pipeline; position selectable (any corner).
+- **Countdown before recording** — optional 3 / 5 / 10-second full-screen countdown; cancellable with the Stop button.
+- **In-browser trim** — dual-slider range selection with live preview seeking and a progress readout; the trimmed clip replaces the preview and download.
+- **MP4 export** — an `MP4 · H.264` option appears in the format dropdown automatically when the browser's `MediaRecorder` supports it; download filename extension follows the container.
+- **Screenshot mode** — grab a full-resolution PNG still of the shared screen while recording.
+- **Custom hotkey remapping** — click a key chip in the Shortcuts panel and press any key; conflicts are rejected.
+- **Preference persistence** — all toggles, quality/format presets, countdown choice, and hotkeys are saved to `localStorage` and restored on load.
+
+### Changed
+- Download button label now reflects the actual container (`Download WEBM` / `Download MP4`).
+- Recorder core rewritten to compose the working stream from an explicit video track + mixed audio tracks (cleaner webcam/PiP integration).
+
 ## [1.0.0] — 2026-07-14
 
 ### Added

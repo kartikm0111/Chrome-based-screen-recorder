@@ -114,6 +114,41 @@
                         </label>
                     </div>
 
+                    <div class="toggle">
+                        <div class="toggle__info">
+                            <span class="toggle__label">Webcam overlay</span>
+                            <span class="toggle__hint">Burns a face-cam bubble into the video.</span>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="camToggle" />
+                            <span class="switch__track"><span class="switch__thumb"></span></span>
+                        </label>
+                    </div>
+
+                    <div class="field" id="camPosField" hidden>
+                        <label class="field__label" for="camPosSelect">Webcam position</label>
+                        <div class="select">
+                            <select id="camPosSelect">
+                                <option value="bottom-right" selected>Bottom right</option>
+                                <option value="bottom-left">Bottom left</option>
+                                <option value="top-right">Top right</option>
+                                <option value="top-left">Top left</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="field__label" for="countdownSelect">Countdown</label>
+                        <div class="select">
+                            <select id="countdownSelect">
+                                <option value="0">Off — start immediately</option>
+                                <option value="3" selected>3 seconds</option>
+                                <option value="5">5 seconds</option>
+                                <option value="10">10 seconds</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="field">
                         <label class="field__label" for="qualitySelect">Video quality</label>
                         <div class="select">
@@ -126,12 +161,13 @@
                     </div>
 
                     <div class="field">
-                        <label class="field__label" for="mimeSelect">Codec</label>
+                        <label class="field__label" for="mimeSelect">Format &amp; codec</label>
                         <div class="select">
                             <select id="mimeSelect">
-                                <option value="video/webm;codecs=vp9,opus">VP9 + Opus (recommended)</option>
-                                <option value="video/webm;codecs=vp8,opus">VP8 + Opus (compatible)</option>
-                                <option value="video/webm">WebM (auto)</option>
+                                <option value="video/webm;codecs=vp9,opus">WebM · VP9 + Opus (recommended)</option>
+                                <option value="video/webm;codecs=vp8,opus">WebM · VP8 + Opus (compatible)</option>
+                                <option value="video/webm">WebM · auto</option>
+                                <option value="video/mp4" id="mp4Option" hidden>MP4 · H.264 (browser-dependent)</option>
                             </select>
                         </div>
                     </div>
@@ -165,11 +201,31 @@
                                 <span>Stop</span>
                             </button>
                         </div>
+
+                        <button id="shotBtn" class="btn btn--ghost" type="button" disabled>
+                            <span class="btn__icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                            </span>
+                            <span>Screenshot (PNG)</span>
+                        </button>
                     </div>
 
                     <div class="timer" role="timer" aria-live="off">
                         <div class="timer__label">Duration</div>
                         <div id="timer" class="timer__value">00:00:00</div>
+                    </div>
+
+                    <h3 class="panel__title panel__title--sub">Shortcuts</h3>
+                    <div class="hotkeys">
+                        <div class="hotkey">
+                            <span class="hotkey__label">Start / Stop</span>
+                            <button id="hotkeyRecordBtn" class="hotkey__btn" type="button" data-action="record" aria-label="Remap start/stop shortcut">R</button>
+                        </div>
+                        <div class="hotkey">
+                            <span class="hotkey__label">Pause / Resume</span>
+                            <button id="hotkeyPauseBtn" class="hotkey__btn" type="button" data-action="pause" aria-label="Remap pause/resume shortcut">Space</button>
+                        </div>
+                        <p class="hotkeys__hint">Click a key to remap it, then press any key.</p>
                     </div>
                 </aside>
 
@@ -193,6 +249,26 @@
                             <span class="recbadge__dot"></span>
                             REC
                         </div>
+
+                        <div id="countdownOverlay" class="countdown" hidden>
+                            <span id="countdownNum" class="countdown__num">3</span>
+                        </div>
+                    </div>
+
+                    <div id="trimPanel" class="trim" hidden>
+                        <div class="trim__head">
+                            <span class="trim__title">✂️ Trim</span>
+                            <span id="trimRange" class="trim__range">00:00:00 → 00:00:00</span>
+                        </div>
+                        <div class="trim__sliders">
+                            <input type="range" id="trimStart" min="0" max="1000" value="0" step="1" aria-label="Trim start" />
+                            <input type="range" id="trimEnd" min="0" max="1000" value="1000" step="1" aria-label="Trim end" />
+                        </div>
+                        <div class="trim__actions">
+                            <button id="trimApplyBtn" class="btn btn--primary btn--sm" type="button">Apply trim</button>
+                            <button id="trimCancelBtn" class="btn btn--ghost btn--sm" type="button">Cancel</button>
+                            <span id="trimProgress" class="trim__progress" hidden></span>
+                        </div>
                     </div>
 
                     <div class="actions">
@@ -200,7 +276,13 @@
                             <span class="btn__icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M5 20h14v-2H5v2zm7-18v12l4-4 1.4 1.4L12 17l-5.4-5.6L8 10l4 4V2h0z"/></svg>
                             </span>
-                            <span>Download WebM</span>
+                            <span id="downloadLabel">Download</span>
+                        </button>
+                        <button id="trimBtn" class="btn btn--ghost" type="button" disabled>
+                            <span class="btn__icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>
+                            </span>
+                            <span>Trim</span>
                         </button>
                         <button id="newBtn" class="btn btn--ghost" type="button" disabled>
                             <span class="btn__icon" aria-hidden="true">
@@ -260,6 +342,27 @@
                     </div>
                     <h3>Live duration</h3>
                     <p>A high-precision timer keeps track of your recording length, pauses aware.</p>
+                </article>
+                <article class="feat">
+                    <div class="feat__icon">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                    </div>
+                    <h3>Webcam overlay</h3>
+                    <p>Burn a circular face-cam bubble into any corner of the recording — composited live.</p>
+                </article>
+                <article class="feat">
+                    <div class="feat__icon">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>
+                    </div>
+                    <h3>In-browser trim</h3>
+                    <p>Cut the dead air off both ends of your clip before downloading — no editor needed.</p>
+                </article>
+                <article class="feat">
+                    <div class="feat__icon">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    </div>
+                    <h3>Screenshot mode</h3>
+                    <p>Grab a full-resolution PNG still of the shared screen mid-recording.</p>
                 </article>
             </div>
         </section>

@@ -118,7 +118,11 @@ The entire application is a **single static site** that ships in **under 30 KB g
 | ⚡ | **Instant preview** | Watch your recording back the moment you stop — no server round-trip. |
 | 💾 | **One-click download** | Exports a `.webm` file with an ISO-8601 timestamped filename. |
 | 🎛️ | **Quality presets** | 480p / 720p / 1080p resolutions at 30–60 FPS. |
-| 🧩 | **Codec picker** | Choose between VP9 + Opus (best quality) and VP8 + Opus (best compatibility). |
+| 🧩 | **Codec picker** | VP9 + Opus, VP8 + Opus, or **MP4 · H.264** where the browser supports it. |
+| 📹 | **Webcam overlay** | A circular face-cam bubble composited live into any corner of the recording. |
+| ⏱️ | **Countdown** | Optional 3 / 5 / 10-second on-screen countdown before capture begins. |
+| ✂️ | **In-browser trim** | Cut the start and end off your clip with dual sliders — no external editor. |
+| 📸 | **Screenshot mode** | Grab a full-resolution PNG still of the shared screen mid-recording. |
 
 ### Interface &amp; UX
 
@@ -129,7 +133,8 @@ The entire application is a **single static site** that ships in **under 30 KB g
 | 📱 | **Fully responsive** | Works down to a 360 px viewport. |
 | 🎯 | **REC badge &amp; live timer** | Always know you're recording and for how long. |
 | 🔴 | **Live status pill** | `Idle → Recording → Paused → Ready` — with animated indicators. |
-| ⌨️ | **Keyboard shortcuts** | `R` to start/stop, `Space` to pause/resume. |
+| ⌨️ | **Keyboard shortcuts** | `R` to start/stop, `Space` to pause/resume — **fully remappable**. |
+| 💾 | **Saved preferences** | Every toggle, preset, and hotkey persists to `localStorage`. |
 | 🔔 | **Toast notifications** | Non-intrusive success/error feedback. |
 | 🛡️ | **Unload protection** | `beforeunload` warns you if you're about to lose a recording. |
 | ♿ | **Accessible** | Semantic HTML, ARIA labels, keyboard-navigable, `prefers-reduced-motion` support. |
@@ -156,7 +161,7 @@ The entire application is a **single static site** that ships in **under 30 KB g
 | **Markup** | ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white) |
 | **Styles** | ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=css3&logoColor=white) |
 | **Scripting** | ![JavaScript](https://img.shields.io/badge/JavaScript-ES2020-F7DF1E?style=flat&logo=javascript&logoColor=black) |
-| **Web APIs** | `MediaRecorder` · `getDisplayMedia` · `getUserMedia` · `WebAudio` · `Blob` · `URL` |
+| **Web APIs** | `MediaRecorder` · `getDisplayMedia` · `getUserMedia` · `WebAudio` · `Canvas` · `Blob` · `localStorage` |
 | **Fonts** | ![Google Fonts](https://img.shields.io/badge/Inter-4285F4?style=flat&logo=googlefonts&logoColor=white) ![JetBrains Mono](https://img.shields.io/badge/JetBrains_Mono-000?style=flat&logo=jetbrains&logoColor=white) |
 | **Hosting** | ![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat&logo=vercel&logoColor=white) |
 | **Version Control** | ![Git](https://img.shields.io/badge/Git-F05032?style=flat&logo=git&logoColor=white) ![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github&logoColor=white) |
@@ -387,7 +392,7 @@ The included `vercel.json` sets:
 | <kbd>R</kbd> | Start / stop the recording |
 | <kbd>Space</kbd> | Pause / resume the recording |
 
-Focus must be on the page (not inside an input) for shortcuts to fire.
+Both shortcuts are **remappable** — click the key chip in the Shortcuts panel, then press any key. Your choice is saved to `localStorage`. Focus must be on the page (not inside an input) for shortcuts to fire.
 
 ---
 
@@ -432,14 +437,16 @@ The only outbound network requests are for **Google Fonts** (Inter, JetBrains Mo
 - [x] Instant preview + WebM download
 - [x] Keyboard shortcuts
 - [x] Vercel deployment with security headers
-- [ ] Webcam picture-in-picture overlay
-- [ ] In-browser trim / crop
-- [ ] MP4 export via `WebCodecs`
-- [ ] Countdown before recording starts
-- [ ] Custom hotkey remapping
-- [ ] Presets persisted to `localStorage`
-- [ ] Screenshot-only mode
+- [x] Webcam picture-in-picture overlay — composited live onto the recording
+- [x] In-browser trim — dual-slider range trim with progress feedback
+- [x] MP4 export — surfaced automatically where `MediaRecorder` supports it
+- [x] Countdown before recording starts (3 / 5 / 10 s, or off)
+- [x] Custom hotkey remapping — click a key chip and press any key
+- [x] Presets persisted to `localStorage` — every toggle survives a refresh
+- [x] Screenshot mode — grab a full-res PNG still mid-recording
 - [ ] Cloud upload adapters (opt-in) — Google Drive, Dropbox
+- [ ] Webcam-only recording mode
+- [ ] Annotation tools (draw on screen while recording)
 
 ---
 
@@ -455,7 +462,7 @@ Nowhere but your device. The video is held in an in-memory `Blob` and handed to 
 <details>
 <summary><b>Why WebM and not MP4?</b></summary>
 
-`MediaRecorder` in most browsers only emits WebM natively. MP4 output would require re-encoding on-device (via `WebCodecs` or `ffmpeg.wasm`), which is on the roadmap. In the meantime, VLC and most modern players open WebM files directly, and a `.webm` → `.mp4` conversion is a one-liner: `ffmpeg -i input.webm -c copy output.mp4`.
+WebM is what `MediaRecorder` emits natively in every browser that supports screen capture, so it's the default. **Where the browser can also record MP4 directly (e.g. recent Chrome and Safari builds), an MP4 · H.264 option appears automatically in the Format &amp; codec dropdown.** If you need MP4 on a browser that doesn't support it, the conversion is a one-liner: `ffmpeg -i input.webm -c copy output.mp4`.
 
 </details>
 
